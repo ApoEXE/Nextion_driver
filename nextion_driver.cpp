@@ -66,8 +66,8 @@ void Nextion_driver::write_com(std::string key, int val) {
 
     write(fd, (char*)msg, sizeof(msg));
     //fcntl(fd, F_SETFL, FNDELAY);
-    read(fd,(char*)buff,1);
-    printf("reading= %02x \n",buff[0]);
+    //read(fd,(char*)buff,1);
+    //printf("reading= %02x \n",buff[0]);
     
  
 }
