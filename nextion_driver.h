@@ -16,16 +16,17 @@
 
 
 class Nextion_driver{
-private:
-    int fd;
+
 public:
+
     Nextion_driver(std::string path, int baudrate);
-    virtual ~Nextion_driver(){close(fd);};
+    ~Nextion_driver();
     void write_com(std::string key, int val);
 
 private:
     char buff[BUF_SIZE];
     speed_t baudrate(int);
+
 
 
 };

@@ -5,13 +5,18 @@
 
 char terminator[] ={0xff,0xff,0xff} ;
 struct termios saved_attributes;
-void
-reset_input_mode (void)
+static int fd;
+
+
+void reset_input_mode (void)
 {
-  tcsetattr (STDIN_FILENO, TCSANOW, &saved_attributes);
+  tcsetattr (fd, TCSANOW, &saved_attributes);
+  printf("RESET MODE RESTORING");
 }
 
-
+Nextion_driver::~Nextion_driver(){
+    close(fd);
+}
 
 Nextion_driver::Nextion_driver(std::string path, int baud) {
     memset(buff,0,BUF_SIZE);
@@ -24,7 +29,7 @@ Nextion_driver::Nextion_driver(std::string path, int baud) {
 
     /* Save the terminal attributes so we can restore them later. */
     tcgetattr (fd, &saved_attributes);
-    atexit (reset_input_mode);
+    atexit(reset_input_mode);
     struct termios tty;
 
     bzero(&tty, sizeof(tty));
@@ -35,7 +40,7 @@ Nextion_driver::Nextion_driver(std::string path, int baud) {
     /* set input mode (non-canonical, no echo,...) */
     tty.c_lflag = 0;
          
-    tty.c_cc[VTIME]    = 1;   /* inter-character timer unused */
+    tty.c_cc[VTIME]    = 50;   /* inter-character timer unused */
     tty.c_cc[VMIN]     = 0;   /* blocking read until 5 chars received */
         
     tcflush(fd, TCIFLUSH);
@@ -51,7 +56,7 @@ Nextion_driver::Nextion_driver(std::string path, int baud) {
 
 void Nextion_driver::write_com(std::string key, int val) {
     // write
-    //int n_written = 0;
+    int _n = 0;
     
     std::string value = key+std::to_string(val);
     int msg_size=value.length()+3;
@@ -63,11 +68,14 @@ void Nextion_driver::write_com(std::string key, int val) {
     msg[msg_size-3]=0xff;
     msg[msg_size-2]=0xff;
     msg[msg_size-1]=0xff;
+    
 
     write(fd, (char*)msg, sizeof(msg));
-    //fcntl(fd, F_SETFL, FNDELAY);
-    //read(fd,(char*)buff,1);
-    //printf("reading= %02x \n",buff[0]);
+   
+    printf("wrote %s \n",msg);
+    _n=read(fd,(char*)buff,sizeof(msg));
+    printf("size %d reading= %s \n",_n,buff);
+    memset(buff,0,_n);
     
  
 }

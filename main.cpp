@@ -12,7 +12,7 @@ int main(){
     {
         display.write_com("n0.val=",inc);
         inc++;
-        sleep(1);
+        //sleep(1);
     }
     
     
