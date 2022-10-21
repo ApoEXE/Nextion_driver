@@ -1,21 +1,4 @@
-//
-// Created by JavierPernia-MS4M on 27/09/2022.
-//
 
-#ifndef NEXTION_DRIVER_H
-#define NEXTION_DRIVER_H
-
-#include <string>
-#include <unistd.h>
-#include <termios.h> // POSIX terminal control definitions
-#include <fcntl.h> // File control definitions
-#include <stdlib.h>
-#include <cstring>
-#include <sstream>
-
-#include <pthread.h>
-
-#define BUF_SIZE 20
 #define OVERFLOW 0X24//4 0x24 0xFF 0xFF 0xFF
 #define TOUCH_EVENT 0X65//7 0x65 0x00 0x01 0x01 0xFF 0xFF 0xFF
 #define CURR_PAGE 0X66//5 0x66 0x01 0xFF 0xFF 0xFF
@@ -30,21 +13,5 @@
 #define TRANSPARENT_DATA_FINISHED 0XFD //4 0xFD 0xFF 0xFF 0xFF
 #define TRANSPARENT_DATA_READY 0XFE//4 0xFE 0xFF 0xFF 0xFF
 
-
-
-class Nextion_driver{
-
-public:
-
-    Nextion_driver(std::string path, int baudrate);
-    ~Nextion_driver();
-    void write_com(std::string key, int val);
-
-private:
-    char buff[BUF_SIZE];
-    speed_t baudrate(int);
-
-
-
-};
-#endif //HELLO_CMAKE_CS_VIMS_H
+char STARTUP[]={0x00,0x00,0x00,0xff,0xff,0xff};
+char NEXTION_READY[]={0x88,0xff,0xff,0xff};

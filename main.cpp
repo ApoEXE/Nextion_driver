@@ -8,11 +8,11 @@ int main(){
 
     Nextion_driver display = Nextion_driver("/dev/ttyTHS1",9600);
     int inc = 0;
-    while (inc <= 20)
+    while (inc <= 100)
     {
         display.write_com("n0.val=",inc);
         inc++;
-        //sleep(1);
+        sleep(1);
     }
     
     
