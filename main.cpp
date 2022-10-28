@@ -8,9 +8,9 @@ int main(){
 
     Nextion_driver display = Nextion_driver("/dev/ttyTHS1",9600);
     int inc = 0;
-    while (inc <= 100)
+    while (1)
     {
-        display.write_com("n0.val=",inc);
+        //display.write_com("n0.val=",inc);
         inc++;
         sleep(1);
     }
