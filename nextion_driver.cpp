@@ -26,7 +26,6 @@ void *read_thread(void *arg)
 {
     char buff[BUF_SIZE];
     int _n = 0;
-    double tmp = 0;
     double end = 0;
     uint16_t flag = 0;
     memset(buff, 0, BUF_SIZE);
@@ -136,6 +135,9 @@ Nextion_driver::Nextion_driver(std::string path, int baud)
         printf("Error: pthread_create() failed\n");
         exit(EXIT_FAILURE);
     }
+
+    //init Nextion display
+    write_com("rest");
 }
 
 void Nextion_driver::write_com(std::string key, int val)
@@ -143,6 +145,26 @@ void Nextion_driver::write_com(std::string key, int val)
     // write
 
     std::string value = key + std::to_string(val);
+    int msg_size = value.length() + 3;
+
+    char msg[msg_size];
+
+    strcpy(msg, value.c_str());
+
+    msg[msg_size - 3] = 0xff;
+    msg[msg_size - 2] = 0xff;
+    msg[msg_size - 1] = 0xff;
+
+    write(fd, (char *)msg, sizeof(msg));
+
+    printf("wrote %s \n", msg);
+}
+
+void Nextion_driver::write_com(std::string key)
+{
+    // write
+
+    std::string value = key;
     int msg_size = value.length() + 3;
 
     char msg[msg_size];

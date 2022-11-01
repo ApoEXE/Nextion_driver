@@ -39,6 +39,7 @@ public:
     Nextion_driver(std::string path, int baudrate);
     ~Nextion_driver();
     void write_com(std::string key, int val);
+    void write_com(std::string key);
 
 private:
     char buff[BUF_SIZE];
