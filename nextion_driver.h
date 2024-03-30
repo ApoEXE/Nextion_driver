@@ -15,6 +15,10 @@
 
 #include <pthread.h>
 
+#include <iostream>
+#include <thread>
+#include <functional>
+
 #define BUF_SIZE 20
 #define OVERFLOW 0X24//4 0x24 0xFF 0xFF 0xFF
 #define TOUCH_EVENT 0X65//7 0x65 0x00 0x01 0x01 0xFF 0xFF 0xFF
@@ -38,7 +42,11 @@ public:
 
     Nextion_driver(std::string path, int baudrate);
     ~Nextion_driver();
-    void write_com(std::string key, int val);
+    void write_text(std::string key, int val);
+    void write_value(std::string key, int val);
+    void write_waveform(int id, int ch, int val);
+    long map(long x, long in_min, long in_max, long out_min, long out_max);
+    void infiniteThread(std::function<void(char[20])> callback);
 
 private:
     char buff[BUF_SIZE];
