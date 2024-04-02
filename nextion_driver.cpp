@@ -20,46 +20,6 @@ Nextion_driver::~Nextion_driver()
     close(fd);
 }
 
-void *read_thread(void *arg)
-{
-    char buff[BUF_SIZE];
-    int _n = 0;
-    memset(buff, 0, BUF_SIZE);
-
-    printf("starting reading thread\n");
-    while (1)
-    {
-        _n = read(fd, (char *)buff, BUF_SIZE);
-        printf("size %d reading= ", _n);
-        for (size_t i = 0; i < _n; i++)
-        {
-            printf(" %02x:%c ", buff[i], buff[i]);
-        }
-        printf("\n");
-        for (size_t i = 0; i < _n; i++)
-        {
-            if (buff[i] == STARTUP[i])
-            {
-                if (buff[i + 1] == STARTUP[i + 1] && buff[i + 2] == STARTUP[i + 2] && buff[i + 3] == STARTUP[i + 3] && buff[i + 4] == STARTUP[i + 4] && buff[i + 5] == STARTUP[i + 5])
-                    printf("STARTUP \n");
-            }
-            if (buff[i] == NEXTION_READY[i])
-            {
-                printf("got in\n");
-                printf("%02x, %02x \n", buff[i], NEXTION_READY[i]);
-                printf("%02x, %02x \n", buff[i + 1], NEXTION_READY[i + 1]);
-                printf("%02x, %02x \n", buff[i + 2], NEXTION_READY[i + 2]);
-                printf("%02x, %02x \n", buff[i + 3], NEXTION_READY[i + 3]);
-                if (buff[i + 1] == NEXTION_READY[i + 1] && buff[i + 2] == NEXTION_READY[i + 2] && buff[i + 3] == NEXTION_READY[i + 3])
-                    printf("NEXTION READY \n");
-            }
-        }
-
-        memset(buff, 0, _n);
-    }
-
-    pthread_exit(NULL);
-}
 
 Nextion_driver::Nextion_driver(std::string path, int baud)
 {
@@ -93,16 +53,6 @@ Nextion_driver::Nextion_driver(std::string path, int baud)
 
     tcflush(fd, TCIFLUSH);
     tcsetattr(fd, TCSANOW, &tty);
-
-    /*
-    pthread_t r_thread;
-    int ret = pthread_create(&r_thread, NULL, &read_thread, NULL);
-    if (ret != 0)
-    {
-        printf("Error: pthread_create() failed\n");
-        exit(EXIT_FAILURE);
-    }
-    */
 }
 
 // Function to be called from the infinite thread
@@ -111,11 +61,10 @@ void Nextion_driver::infiniteThread(std::function<void(char[20])> callback)
     // Do some work in the thread
     //printf("starting reading thread\n");
     char buff[BUF_SIZE];
-    int _n = 0;
     memset(buff, 0, BUF_SIZE);
     while (true)
     {
-        _n = read(fd, (char *)buff, BUF_SIZE);
+        read(fd, (char *)buff, BUF_SIZE);
         //printf("size %d reading= %s ", _n,buff);
         //std::this_thread::sleep_for(std::chrono::seconds(1));
         // Call the callback function
